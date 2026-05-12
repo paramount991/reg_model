@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+# Copyright (c) 2026--2030. Wang Weihua
+# All rights reserved.
+"""配置管理-日志配置."""
+
+from pydantic import Field
+from pydantic_settings import SettingsConfigDict
+
+from reg_model.core.constants import LogLevel
+
+from .base import BaseConfig
+
+# 环境变量前缀
+ENV_PREFIX = 'LOG_'
+
+
+class LogConfig(BaseConfig):
+    """日志配置."""
+
+    model_config = SettingsConfigDict(env_prefix=ENV_PREFIX)
+
+    # 日志级别
+    level: LogLevel = Field(
+        default=LogLevel.INFO, description='日志级别', validation_alias='LOG_LEVEL'
+    )
+
+    # 日志格式
+    format: str = Field(
+        default='json', description='日志格式(json/text)', validation_alias='LOG_FORMAT'
+    )
+
+    # 日志输出
+    output: str = Field(
+        default='console',
+        description='日志输出(console/file/both)',
+        validation_alias='LOG_OUTPUT',
+    )
+
+    # 日志文件目录
+    dir_name: str | None = Field(default=None, description='日志文件所在目录')
+
+    # 日志文件名
+    file_name: str | None = Field(default=None, description='日志文件名')
+
+    # 日志轮转
+    max_bytes: int = Field(
+        default=10 * 1024 * 1024,  # 10MB
+        description='最大文件大小',
+        validation_alias='LOG_MAX_BYTES',
+    )
+
+    backup_count: int = Field(
+        default=5, description='备份文件数量', validation_alias='LOG_BACKUP_COUNT'
+    )
