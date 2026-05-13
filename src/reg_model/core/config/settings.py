@@ -12,8 +12,8 @@ from typing import Any
 
 import tomli as tomllib
 import tomli_w
-from pydantic import Field, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field, model_validator, ValidationError
+from pydantic_settings import BaseSettings, SettingsConfigDict, PydanticBaseSettingsSource, TomlConfigSettingsSource
 
 from reg_model.core import constants as const
 
@@ -35,7 +35,7 @@ class Settings(BaseSettings):
         validate_default=True,
         env_prefix=ENV_PREFIX,  # 环境变量前缀
         # 支持嵌套配置的环境变量覆盖
-        env_nested_delimiter='__',  # 例如: DATABASE__HOST
+        env_nested_delimiter='_',  # 例如: DATABASE__HOST
     )
 
     # 应用配置
@@ -93,6 +93,39 @@ class Settings(BaseSettings):
 
         return remove_sensitive(config_dict)
 
+    @classmethod
+    @classmethod
+    def from_toml(cls, toml_path: str | Path) -> 'Settings':
+        """加载指定配置文件 (TOML).
+
+        优先级：init 参数 > 环境变量 > TOML > 字段默认值.
+        """
+        # 直接从 TOML 文件加载配置数据
+        import tomli
+        with open(toml_path, 'rb') as f:
+            toml_data = tomli.load(f)
+        
+        # 使用 model_validate 创建实例
+        return cls.model_validate(toml_data)
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
+        """指定配置优先级.
+
+        优先级: 代码传入 > 环境变量 > TOML > 内置默认.
+        """
+        return (
+            init_settings,
+            env_settings,
+            TomlConfigSettingsSource(settings_cls),
+            file_secret_settings,
+        )
 
 # 内部使用的配置类
 _ConfigClass = Settings
@@ -126,14 +159,19 @@ def load_settings(
     if not file_path.exists():
         raise FileNotFoundError(f'配置文件不存在: {file_path}')
 
-    # 加载配置文件
-    data = load_config_file(file_path)
+    # 从配置文件创建配置实例
+    try:
+        instance = _ConfigClass.from_toml(file_path)
+    except ValidationError as e:
+        print(f'配置文件解析错误: {e}')
+    except Exception as e:
+        raise Exception(f'配置文件加载错误: {e}') from None
 
-    # 创建配置实例
-    instance = _ConfigClass.model_validate(data)
     _current_settings = instance
+
     return instance
 
+@lru_cache(maxsize=1)
 def get_settings(
     file_path: str | Path | None = None,
 ) -> Settings:
@@ -151,11 +189,7 @@ def get_settings(
     if file_path is not None:
         load_settings(file_path)
 
-    elif _current_settings is None:
-        # 使用默认配置路径或抛出异常
-        raise RuntimeError("配置未初始化")
-
-    return _current_settings  # 此时保证不为 None
+    return _current_settings
 
 
 def _sanitize_for_toml(obj: Any) -> Any:
@@ -199,9 +233,9 @@ def save_default_config(
     if file_path.exists() and not overwrite:
         raise FileExistsError(f'文件已存在: {file_path}')
 
-    instance = _ConfigClass()
-    # mode=json: Path/StrEnum 等变为 TOML 友好类型
-    # exclude_none:TOML 无 null
+    # 避免校验必填字段
+    instance = _ConfigClass.model_construct()
+    # mode=json:让 Path/StrEnum 等转为 TOML 友好类型
     data = instance.model_dump(
         mode='json',
         exclude_unset=exclude_unset,
@@ -233,18 +267,3 @@ def save_config_file(data: dict[str, Any], file_path: str | Path) -> None:
         raise ImportError('写入 TOML 需要安装 tomli-w: pip install tomli-w')
     with open(file_path, 'wb') as f:
         tomli_w.dump(safe, f)
-
-
-def load_config_file(file_path: str | Path) -> dict[str, Any]:
-    """加载配置文件."""
-    file_path = Path(file_path)
-    return load_toml_config(file_path)
-
-
-def load_toml_config(file_path: str | Path, encoding='utf-8') -> dict[str, Any]:
-    """加载 TOML 配置文件."""
-    file_path = Path(file_path)
-    if file_path.exists():
-        with open(file_path, 'rb') as f:
-            return tomllib.load(f)
-    return {}

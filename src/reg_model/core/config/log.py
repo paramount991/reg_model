@@ -21,19 +21,19 @@ class LogConfig(BaseConfig):
 
     # 日志级别
     level: LogLevel = Field(
-        default=LogLevel.INFO, description='日志级别', validation_alias='LOG_LEVEL'
+        default=LogLevel.INFO, description='日志级别', # validation_alias='LOG_LEVEL'  # 注释掉以支持 TOML 直接加载
     )
 
     # 日志格式
     format: str = Field(
-        default='json', description='日志格式(json/text)', validation_alias='LOG_FORMAT'
+        default='json', description='日志格式(json/text)', # validation_alias='LOG_FORMAT'  # 注释掉以支持 TOML 直接加载
     )
 
     # 日志输出
     output: str = Field(
         default='console',
         description='日志输出(console/file/both)',
-        validation_alias='LOG_OUTPUT',
+        # validation_alias='LOG_OUTPUT'  # 注释掉以支持 TOML 直接加载,
     )
 
     # 日志文件目录
@@ -46,9 +46,9 @@ class LogConfig(BaseConfig):
     max_bytes: int = Field(
         default=10 * 1024 * 1024,  # 10MB
         description='最大文件大小',
-        validation_alias='LOG_MAX_BYTES',
+        # validation_alias='LOG_MAX_BYTES'  # 注释掉以支持 TOML 直接加载,
     )
 
     backup_count: int = Field(
-        default=5, description='备份文件数量', validation_alias='LOG_BACKUP_COUNT'
+        default=5, description='备份文件数量', # validation_alias='LOG_BACKUP_COUNT'  # 注释掉以支持 TOML 直接加载
     )

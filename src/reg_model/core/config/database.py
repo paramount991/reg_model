@@ -28,15 +28,15 @@ class DatabaseConfig(BaseConfig):
 
     # 连接信息
     host: str = Field(
-        default='localhost', description='数据库主机', validation_alias='DB_HOST'
+        default='localhost', description='数据库主机'
     )
 
     port: int = Field(
-        default=5432, description='数据库端口', validation_alias='DB_PORT'
+        default=5432, description='数据库端口'
     )
 
     username: str = Field(
-        default='postgres', description='数据库用户名', validation_alias='DB_USER'
+        default='postgres', description='数据库用户名'
     )
 
     password: str = Field(

@@ -22,8 +22,8 @@ class AppConfig(BaseSettings):
         default=PROJECT_NAME, description='应用名称', validation_alias='APP_NAME'
     )
     version: str = Field(
-        default=PROJECT_VERSION, description='应用版本', validation_alias='APP_VERSION'
+        default=PROJECT_VERSION, description='应用版本',validation_alias='APP_VERSION'
     )
     description: str = Field(
-        default=PROJECT_DESC, description='应用描述', validation_alias='APP_DESCRIPTION'
+        default=PROJECT_DESC, description='应用描述',  validation_alias='APP_DESCRIPTION'
     )

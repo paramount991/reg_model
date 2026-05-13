@@ -28,7 +28,7 @@ class EnvironmentConfig(BaseConfig):
     environment: EnvironmentType = Field(
         default=EnvironmentType.DEVELOPMENT,
         description='运行环境',
-        validation_alias='APP_ENV',
+        # validation_alias='APP_ENV'  # 注释掉以支持 TOML 直接加载,
     )
 
     # 调试模式

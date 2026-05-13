@@ -1,0 +1,21 @@
+# reg_model 测试配置文件
+# 用于验证配置优先级：配置文件 > 环境变量
+[app]
+name = "我的测试应用 (来自配置文件)"
+version = "0.1.0-test"
+description = "这是从 reg_model.toml 加载的配置"
+[env]
+environment = "development"
+debug = true
+[log]
+level = "DEBUG"
+format = "text"
+output = "console"
+[db]
+type = "sqlite"
+host = "配置文件优先于环境变量"
+port = 3306
+username = "test_user_from_config"
+password = "test_password_from_config"
+database = "test_db_from_config"
+pool_size = 5
