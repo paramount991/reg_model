@@ -4,7 +4,6 @@
 """使用回调函数实现全局选项."""
 
 from pathlib import Path
-import sys
 
 import typer
 from pydantic import BaseModel, ConfigDict

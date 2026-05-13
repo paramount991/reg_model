@@ -17,7 +17,6 @@ app = typer.Typer(
     no_args_is_help=True, help=const.PROJECT_DESC, callback=global_options
 )
 
-
 app.add_typer(config_app, name='config', help='配置文件管理')
 app.add_typer(version_app, help='显示版本信息')
 app.add_typer(help_app, help='显示帮助信息')

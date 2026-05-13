@@ -1,0 +1,59 @@
+# Ruff 配置文件
+# 文档：https://docs.astral.sh/ruff/configuration/
+
+target-version = "py312"   # 目标 Python 版本
+line-length = 88           # 最大行长度
+
+# 排除特定目录
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".venv",
+    "venv",
+    "proto",   # 排除自动生成的 protobuf 代码
+    "sandbox", # 排除沙盒代码
+]
+
+[lint]
+select = [
+    "E",   # pycodestyle errors (PEP 8 风格错误)
+    "W",   # pycodestyle warnings (PEP 8 风格警告)
+    "F",   # Pyflakes（如未使用的导入和变量）
+    "I",   # isort（导入排序）
+    "B",   # flake8-bugbear（常见逻辑错误）
+    "N",   # pep8-naming（命名规范）
+    "D",   # pydocstyle（文档字符串风格，Google Style）
+    "UP",  # pyupgrade（建议使用更新的 Python 语法）
+    "C4",  # flake8-comprehensions（改进推导式写法）
+    "SIM", # flake8-simplify（代码简化建议）
+    "TCH", # flake8-type-checking（将仅用于类型的导入放入 `if TYPE_CHECKING:`）
+    "RUF", # Ruff 特有的一些规则
+]
+
+# 需要忽略的单项规则
+ignore = [
+    "D100",   # 允许缺少模块级 docstring
+    "D104",   # 允许包级 docstring 缺失
+    "D107",   # __init__ 方法的 docstring 不是必须的
+    "E501",   # 行长度错误，由格式化工具负责处理
+    "B008",   # 函数参数默认值中不允许函数调用
+    "RUF012", # 可变类属性不需要强制标注 ClassVar
+]
+
+[lint.per-file-ignores]
+"__init__.py" = ["F401"]                # 允许未使用的导入
+"tests/**/*.py" = ["T201", "PLR2004"]   # 允许使用 print 和魔法比较
+
+[lint.isort]
+# 导入顺序（响应 lint.select 含 I 时的排序风格）
+# known-first-party = ["rodps_fetch"]
+
+[lint.pydocstyle]
+convention = "google"         # 使用 Google 风格文档字符串
+
+[format]
+quote-style = "single"        # 引号风格
+indent-style = "space"        # 缩进风格
+docstring-code-format = true  # 格式化文档字符串中代码

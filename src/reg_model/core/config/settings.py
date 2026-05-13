@@ -10,10 +10,14 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-import tomli as tomllib
 import tomli_w
-from pydantic import Field, model_validator, ValidationError
-from pydantic_settings import BaseSettings, SettingsConfigDict, PydanticBaseSettingsSource, TomlConfigSettingsSource
+from pydantic import Field, ValidationError, model_validator
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+    TomlConfigSettingsSource,
+)
 
 from reg_model.core import constants as const
 
@@ -94,7 +98,6 @@ class Settings(BaseSettings):
         return remove_sensitive(config_dict)
 
     @classmethod
-    @classmethod
     def from_toml(cls, toml_path: str | Path) -> 'Settings':
         """加载指定配置文件 (TOML).
 
@@ -102,11 +105,13 @@ class Settings(BaseSettings):
         """
         # 直接从 TOML 文件加载配置数据
         import tomli
+
         with open(toml_path, 'rb') as f:
             toml_data = tomli.load(f)
-        
+
         # 使用 model_validate 创建实例
         return cls.model_validate(toml_data)
+
     @classmethod
     def settings_customise_sources(
         cls,
@@ -126,6 +131,7 @@ class Settings(BaseSettings):
             TomlConfigSettingsSource(settings_cls),
             file_secret_settings,
         )
+
 
 # 内部使用的配置类
 _ConfigClass = Settings
@@ -170,6 +176,7 @@ def load_settings(
     _current_settings = instance
 
     return instance
+
 
 @lru_cache(maxsize=1)
 def get_settings(

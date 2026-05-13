@@ -9,10 +9,10 @@ import typer
 app = typer.Typer()
 
 
-@app.command(name="help", help="显示帮助信息")
+@app.command(name='help', help='显示帮助信息')
 def help_command(
     ctx: typer.Context,
-    command: str | None = typer.Argument(None, help="要查看帮助的子命令名称"),
+    command: str | None = typer.Argument(None, help='要查看帮助的子命令名称'),
 ):
     """显示帮助信息."""
     # 根上下文对应整个命令行程序
