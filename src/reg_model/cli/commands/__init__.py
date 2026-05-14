@@ -1,6 +1,5 @@
 from .config_cmd import app as config_app
 from .data_cmd import app as data_app
-from .help_cmd import app as help_app
 from .version_cmd import app as version_app
 
 # from .model_cmd import app as model_app
@@ -11,7 +10,6 @@ from .version_cmd import app as version_app
 __all__ = [
     'config_app',
     'data_app',
-    'help_app',
     'version_app',
     # "model_app",
     # "analyze_app",

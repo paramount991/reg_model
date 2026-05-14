@@ -6,6 +6,4 @@
 from .global_options import GlobalOptions, global_options
 from .help_decorator import support_help_at_end
 
-__all__ = ['GlobalOptions', 'global_options','support_help_at_end']
-
-
+__all__ = ['GlobalOptions', 'global_options', 'support_help_at_end']
