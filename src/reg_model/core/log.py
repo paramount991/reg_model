@@ -97,7 +97,7 @@ def init_logging(config: dict[str, Any]) -> None:
         structlog.contextvars.merge_contextvars,
         structlog.stdlib.filter_by_level,
         structlog.stdlib.PositionalArgumentsFormatter(),
-        structlog.processors.TimeStamper(fmt='iso', utc=False),
+        structlog.processors.TimeStamper(fmt='%Y-%m-%d %H:%M:%S', utc=False),
         structlog.processors.StackInfoRenderer(),
         structlog.processors.format_exc_info,
         structlog.stdlib.add_log_level,
