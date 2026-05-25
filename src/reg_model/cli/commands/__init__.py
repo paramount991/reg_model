@@ -19,5 +19,5 @@ __all__ = [
     # 'serve_app',
     # 'train_app',
     'version_app',
-    # 'viz_app',
+    # 'viz_app'
 ]
