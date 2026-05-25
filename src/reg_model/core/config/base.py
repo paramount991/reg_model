@@ -16,7 +16,7 @@ class BaseConfig(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=False,
         extra='ignore',  # 忽略多余的字段
-        validate_default=True,
+        validate_default=False,
         arbitrary_types_allowed=True,
     )
 
@@ -28,7 +28,7 @@ class EnvironmentConfig(BaseConfig):
     environment: EnvironmentType = Field(
         default=EnvironmentType.DEVELOPMENT,
         description='运行环境',
-        # validation_alias='APP_ENV'  # 注释掉以支持 TOML 直接加载,
+        validation_alias='APP_ENV',
     )
 
     # 调试模式
