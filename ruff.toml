@@ -44,7 +44,7 @@ ignore = [
 
 [lint.per-file-ignores]
 "__init__.py" = ["F401"]                # 允许未使用的导入
-"tests/**/*.py" = ["T201", "PLR2004"]   # 允许使用 print 和魔法比较
+"tests/**/*.py" = ["T201", "PLR2004", "D102"]   # 允许使用 print、魔法比较、测试方法无需 docstring
 
 [lint.isort]
 # 导入顺序（响应 lint.select 含 I 时的排序风格）

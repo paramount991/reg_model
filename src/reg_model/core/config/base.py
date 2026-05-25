@@ -15,9 +15,10 @@ class BaseConfig(BaseSettings):
     # 配置 Pydantic 行为
     model_config = SettingsConfigDict(
         case_sensitive=False,
-        extra='ignore',  # 忽略多余的字段
+        extra='ignore',
         validate_default=False,
         arbitrary_types_allowed=True,
+        populate_by_name=True,
     )
 
 
