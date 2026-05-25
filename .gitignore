@@ -8,3 +8,20 @@ wheels/
 
 # Virtual environments
 .venv
+
+# IDE
+.idea/
+
+# Ruff cache
+.ruff_cache/
+
+# Claude Code
+.claude/
+
+# Quarto / Jupyter generated files
+*.html
+*_files/
+*.quarto_ipynb
+
+# Environment files
+.env

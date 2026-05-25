@@ -17,7 +17,7 @@ ENV_PREFIX = 'LOG_'
 class LogConfig(BaseConfig):
     """日志配置."""
 
-    model_config = SettingsConfigDict(env_prefix=ENV_PREFIX)
+    model_config = SettingsConfigDict(env_prefix=ENV_PREFIX, validate_default=False)
 
     # 日志级别
     level: LogLevel = Field(
@@ -36,11 +36,10 @@ class LogConfig(BaseConfig):
         # validation_alias='LOG_OUTPUT'  # 注释掉以支持 TOML 直接加载,
     )
 
-    # 日志文件目录
-    dir_name: str | None = Field(default=None, description='日志文件所在目录')
-
-    # 日志文件名
-    file_name: str | None = Field(default=None, description='日志文件名')
+    # 日志文件目录 (环境变量: LOG_DIR_NAME)
+    dir_name: str = Field(default='logs', description='日志文件所在目录')
+    # 日志文件名 (环境变量: LOG_FILE_NAME)
+    file_name: str = Field(default='app.log', description='日志文件名')
 
     # 日志轮转
     max_bytes: int = Field(

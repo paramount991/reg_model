@@ -1,24 +1,19 @@
 [project]
 name = "reg_model"
 version = "0.1.0"
-description = "Add your description here"
+description = "回归建模 CLI 工具"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "black>=26.3.1",
-    "click>=8.3.3",
+    "pandas>=3.0.3",
     "platformdirs>=4.9.6",
     "pydantic>=2.13.4",
     "pydantic-settings>=2.14.0",
-    "ruff>=0.15.12",
     "structlog>=25.5.0",
     "tomli>=2.4.1",
     "tomli-w>=1.2.0",
+    "tomlkit>=0.15.0",
     "typer>=0.25.1",
-    "typing-extensions>=4.15.0",
-]
-lint = [
-    "ruff",
 ]
 
 [project.scripts]
@@ -27,3 +22,11 @@ reg_model = "reg_model.main:main"
 [build-system]
 requires = ["uv_build>=0.9.13,<0.10.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ty>=0.0.37",
+    "black>=26.3.1",
+    "pytest>=8.0.0",
+    "ruff>=0.15.12",
+]

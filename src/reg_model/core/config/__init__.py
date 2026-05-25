@@ -3,7 +3,8 @@
 # All rights reserved.
 """配置文件管理."""
 
-from .settings import Settings, get_settings, load_settings, save_default_config
+from .serializer import save_default_config
+from .settings import Settings, get_settings, load_settings
 
 __all__ = [
     'Settings',

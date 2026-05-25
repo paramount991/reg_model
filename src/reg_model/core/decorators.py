@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# Copyright (c) 2026--2030. Wang Weihua
+# All rights reserved.
 """核心装饰器模块."""
 
 from collections.abc import Callable
@@ -31,7 +34,7 @@ def handle_errors[**P, T](func: Callable[P, T]) -> Callable[P, T]:
     log = get_logger()
 
     @wraps(func)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> T | None:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
         try:
             return func(*args, **kwargs)
         except Exception as e:
