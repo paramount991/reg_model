@@ -54,7 +54,7 @@ def split_dataset(
         input_path: 完整数据集文件路径
         output_dir: 输出拆分后数据集的目录
         ratio: 训练集、验证集、测试集比例
-        time_column: 如果按时间拆分，指定时间列名
+        time_column: 如果按时间拆分,指定时间列名
         stratify: 分层拆分的标签列
         random_seed: 随机拆分的随机种子
     """

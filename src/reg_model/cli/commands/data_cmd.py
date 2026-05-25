@@ -39,13 +39,13 @@ def validate(
     schema_path: Path | None = typer.Option(
         None, '--schema', '-s', help='数据schema文件路径'
     ),
-    strict: bool = typer.Option(False, '--strict', help='严格模式，验证失败立即退出'),
+    strict: bool = typer.Option(False, '--strict', help='严格模式, 验证失败立即退出'),
 ) -> None:
     """验证数据格式与字段完整性.
 
     Args:
         input_path: 待验证的数据文件路径
-        schema_path: schema定义文件路径，默认使用项目内置schema
+        schema_path: schema定义文件路径, 默认使用项目内置schema
         strict: 是否启用严格验证模式
     """
     manager.validate_data(input_path=input_path, schema_path=schema_path, strict=strict)
@@ -58,7 +58,7 @@ def split(
     input_path: Path = typer.Argument(..., help='输入完整数据集路径'),
     output_dir: Path = typer.Argument(..., help='输出拆分数据集目录'),
     ratio: str = typer.Option(
-        '70:20:10', '--ratio', '-r', help='训练:验证:测试 比例，例如 70:20:10'
+        '70:20:10', '--ratio', '-r', help='训练:验证:测试 比例, 例如 70:20:10'
     ),
     time_column: str | None = typer.Option(
         None, '--time-col', '-t', help='按时间列拆分的列名'
@@ -72,8 +72,8 @@ def split(
         input_path: 完整数据集文件路径
         output_dir: 输出拆分后数据集的目录
         ratio: 训练集、验证集、测试集比例
-        time_column: 如果按时间拆分，指定时间列名
-        stratify: 分层拆分的标签列，保持类别分布一致
+        time_column: 如果按时间拆分, 指定时间列名
+        stratify: 分层拆分的标签列, 保持类别分布一致
         random_seed: 随机拆分的随机种子
     """
     manager.split_dataset(
@@ -119,7 +119,7 @@ def clean(
     Args:
         input_path: 原始数据文件路径
         output_path: 清洗后数据输出路径
-        config_path: 自定义清洗规则配置文件，默认使用内置规则
+        config_path: 自定义清洗规则配置文件, 默认使用内置规则
     """
     manager.clean_data(
         input_path=input_path,
@@ -142,7 +142,7 @@ def preprocess(
 
     Args:
         input_path: 清洗后的数据文件路径
-        output_dir: 预处理输出目录（包含处理器和处理后的数据）
+        output_dir: 预处理输出目录(包含处理器和处理后的数据)
         config_path: 预处理配置文件路径
     """
     manager.preprocess_data(

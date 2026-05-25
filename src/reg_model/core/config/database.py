@@ -53,7 +53,7 @@ class DatabaseConfig(BaseConfig):
             raise ValueError(f'Unsupported database type: {self.type}')
 
     @field_validator('port')
-    def validate_port(cls, v: int, info: ValidationInfo) -> int:
+    def validate_port(self, v: int, info: ValidationInfo) -> int:
         """根据数据库类型验证端口."""
         db_type = info.data.get('type')
         if db_type == DatabaseType.POSTGRESQL and v != 5432:
