@@ -1,0 +1,186 @@
+---
+title: 使用指南
+---
+
+## CLI 结构
+
+```
+reg_model [全局选项] COMMAND [ARGS]
+```
+
+### 全局选项
+
+| 选项 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `--config` | `PATH` | 用户配置目录 | 指定配置文件路径 |
+| `--logfile` | `PATH` | — | 日志文件路径 |
+| `-m, --msglevel` | `LEVEL` | `INFO` | 日志级别 |
+| `--verbose` | `flag` | — | 启用 DEBUG 日志 |
+| `--quiet` | `flag` | — | 仅显示 ERROR |
+| `-V, --version` | `flag` | — | 显示版本并退出 |
+
+日志级别可选值：`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`
+
+### 子命令
+
+| 子命令 | 说明 |
+|--------|------|
+| `config` | 配置文件管理 |
+| `data` | 数据文件管理 |
+| `version` | 显示版本信息 |
+
+---
+
+## config — 配置文件管理
+
+```bash
+reg_model config [COMMAND]
+```
+
+| 命令 | 说明 |
+|------|------|
+| `init` | 写入默认配置到配置文件 |
+| `copy` | 复制预定义配置模板 |
+| `list` / `show` | 列出当前配置内容 |
+| `validate` | 校验配置文件格式 |
+| `set KEY VALUE` | 修改单个配置项 |
+| `get KEY` | 读取单个配置项 |
+| `path` | 打印配置文件路径 |
+
+### 示例
+
+```bash
+# 初始化配置
+reg_model config init
+
+# 强制覆盖
+reg_model config init --force
+
+# 查看配置
+reg_model config list
+
+# 修改配置项
+reg_model config set env.debug true
+reg_model config set db.host 192.168.1.100
+reg_model config set db.port 5432
+
+# 读取配置项
+reg_model config get db.type
+
+# 校验配置
+reg_model config validate
+```
+
+---
+
+## data — 数据文件管理
+
+```bash
+reg_model data [COMMAND]
+```
+
+| 命令 | 说明 |
+|------|------|
+| `fetch` | 从远程/数据库获取原始数据 |
+| `validate` | 验证数据格式与字段完整性 |
+| `split` | 按比例或时间列拆分数据集 |
+| `describe` | 输出数据统计概要 |
+| `clean` | 执行默认或自定义清洗规则 |
+| `preprocess` | 数据预处理与特征工程 |
+| `export` | 导出处理好的数据 |
+
+### 示例
+
+```bash
+# 获取数据
+reg_model data fetch --output data/raw.csv --source demo
+
+# 验证数据
+reg_model data validate data/raw.csv --schema schema.json
+
+# 严格模式验证
+reg_model data validate data/raw.csv --strict
+
+# 拆分数据集（默认 70:20:10）
+reg_model data split data/raw.csv output/
+
+# 自定义拆分比例
+reg_model data split data/raw.csv output/ --ratio 80:10:10 --seed 123
+
+# 按时间列拆分
+reg_model data split data/raw.csv output/ --time-col date
+
+# 数据统计
+reg_model data describe data/raw.csv --output stats.txt
+
+# 数据清洗
+reg_model data clean data/raw.csv data/cleaned.csv --config rules.toml
+
+# 特征工程
+reg_model data preprocess data/cleaned.csv features/ --config preprocess.toml
+
+# 导出
+reg_model data export data/final.csv output/final.parquet --format parquet
+```
+
+---
+
+## version — 版本信息
+
+```bash
+reg_model version
+# 输出: reg_model_回归分析 V0.1.0
+```
+
+---
+
+## 配置文件格式
+
+配置文件使用 TOML 格式：
+
+```toml
+[app]
+name = "reg_model"
+version = "0.1.0"
+description = "回归建模 CLI 工具"
+
+[env]
+environment = "development"  # development, staging, production, testing
+debug = false
+
+[log]
+level = "INFO"               # DEBUG, INFO, WARNING, ERROR, CRITICAL
+format = "json"              # json, text
+output = "console"           # console, file, both
+dir_name = "logs"
+file_name = "app.log"
+max_bytes = 10485760         # 10MB
+backup_count = 5
+
+[db]
+type = "postgresql"          # postgresql, mysql, sqlite
+host = "localhost"
+port = 5432
+username = "postgres"
+password = ""
+database = "app"
+pool_size = 20
+max_overflow = 10
+pool_timeout = 30
+pool_recycle = 3600
+```
+
+### 配置优先级
+
+环境变量可覆盖 TOML 配置，CLI 参数优先级最高：
+
+```
+CLI 参数 > 环境变量 (RegModel_*) > .env > TOML 文件 > 默认值
+```
+
+环境变量示例：
+
+```bash
+export RegModel_env_environment=production
+export RegModel_db_host=db.example.com
+```

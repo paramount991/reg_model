@@ -1,0 +1,74 @@
+---
+title: 安装指南
+---
+
+## 环境要求
+
+- Python >= 3.12
+- [uv](https://docs.astral.sh/uv/) 包管理器
+
+## 安装 reg_model
+
+```bash
+# 克隆仓库
+git clone https://github.com/paramount/reg_model.git
+cd reg_model
+
+# 安装（可编辑模式）
+uv pip install -e .
+```
+
+## 开发环境
+
+```bash
+# 同步开发依赖（含 pytest、black、ruff）
+uv sync --group dev
+```
+
+## 安装 Quarto（渲染文档）
+
+文档站点使用 Quarto 构建。如果需要本地预览或重新生成文档，请安装 Quarto CLI：
+
+```bash
+# Windows
+winget install posit.Quarto
+
+# macOS
+brew install quarto
+
+# Linux
+# 从 https://quarto.org/docs/download/ 下载
+```
+
+## 验证安装
+
+```bash
+# 验证 CLI 可用
+reg_model --version
+
+# 验证 Quarto（如已安装）
+quarto --version
+
+# 渲染文档
+quarto render docs/
+
+# 预览文档
+quarto preview docs/
+```
+
+## 配置
+
+首次使用时建议初始化配置文件：
+
+```bash
+# 生成默认配置到用户目录
+reg_model config init
+
+# 查看配置路径
+reg_model config path
+
+# 查看配置内容
+reg_model config list
+```
+
+配置文件格式见[使用指南](usage.qmd#配置文件格式)。

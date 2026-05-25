@@ -19,6 +19,7 @@ wheels/
 .claude/
 
 # Quarto / Jupyter generated files
+docs/_site/
 *.html
 *_files/
 *.quarto_ipynb

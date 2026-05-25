@@ -1,0 +1,256 @@
+---
+title: API 参考
+---
+
+## reg_model.core — 核心模块
+
+### 常量
+
+```python
+PACKAGE_NAME = "reg_model"
+PROJECT_NAME = "reg_model"
+PROJECT_DESC = "reg_model_回归分析"
+PROJECT_VERSION: str                    # 从 pyproject.toml 动态读取
+DEFAULT_CONFIG_PATH: Path               # 用户配置目录下的默认路径
+```
+
+### 枚举
+
+```python
+class EnvironmentType(StrEnum):
+    DEVELOPMENT = "development"
+    STAGING    = "staging"
+    PRODUCTION = "production"
+    TESTING    = "testing"
+
+class LogLevel(StrEnum):
+    DEBUG    = "DEBUG"
+    INFO     = "INFO"
+    WARNING  = "WARNING"
+    ERROR    = "ERROR"
+    CRITICAL = "CRITICAL"
+
+class DatabaseType(StrEnum):
+    POSTGRESQL = "postgresql"
+    MYSQL      = "mysql"
+    SQLITE     = "sqlite"
+
+class ConfigType(StrEnum):
+    TOML = "toml"
+    YAML = "yaml"
+    ENV  = "ENV"
+```
+
+### 函数
+
+```python
+def get_project_version(project_name: str = PROJECT_NAME) -> str
+    """从 pyproject.toml 动态读取版本, 失败时回退到内置 __version__"""
+
+def get_default_config_path(config_type: str = "toml") -> Path
+    """返回平台特定的默认配置文件路径 (通过 platformdirs)"""
+```
+
+### 装饰器
+
+```python
+@log_command(cmd_name: str)
+    """命令日志装饰器, 记录命令名称和参数"""
+    # 用法: @log_command("fetch")
+
+@handle_errors
+    """统一错误处理装饰器, 捕获异常并记录日志后重新抛出"""
+    # 用法: @handle_errors
+```
+
+### 日志
+
+```python
+def init_logging(config: dict[str, Any]) -> None
+    """初始化 structlog 日志系统, 配置控制台彩色输出和文件 JSON 轮转"""
+
+def get_logger(name: str | None = None) -> structlog.stdlib.BoundLogger
+    """获取 structlog 日志记录器"""
+```
+
+---
+
+## reg_model.core.config — 配置管理
+
+### Settings
+
+```python
+class Settings(BaseSettings):
+    app: AppConfig               # 应用配置
+    env: EnvironmentConfig       # 环境配置
+    log: LogConfig               # 日志配置
+    db: DatabaseConfig           # 数据库配置
+    extra_config: dict[str, Any] # 额外配置
+
+    def get_database_url(self) -> str
+    def dict_without_sensitive(self) -> dict[str, Any]
+
+    @classmethod
+    def from_toml(cls, toml_path: str | Path) -> Settings
+        """从 TOML 文件加载, 环境变量自动覆盖同名配置"""
+
+# 单例访问
+def get_settings(file_path: str | Path | None = None) -> Settings
+def load_settings(file_path: str | Path | None = None,
+                  override_path: str | Path | None = None) -> Settings
+def clear_settings() -> None
+
+# 序列化
+def save_default_config(file_path: str | Path, ...) -> Path
+def save_config_file(data: dict[str, Any], file_path: str | Path) -> None
+```
+
+### AppConfig
+
+```python
+class AppConfig(BaseConfig):
+    name: str         # 默认 "reg_model"
+    version: str      # 默认 动态版本
+    description: str  # 默认 "reg_model_回归分析"
+```
+
+### EnvironmentConfig
+
+```python
+class EnvironmentConfig(BaseConfig):
+    environment: EnvironmentType  # 默认 DEVELOPMENT
+    debug: bool                   # 默认 False
+
+    def is_development(self) -> bool
+    def is_production(self) -> bool
+    def is_testing(self) -> bool
+    def is_staging(self) -> bool
+```
+
+### DatabaseConfig
+
+```python
+class DatabaseConfig(BaseConfig):
+    type: DatabaseType  # 默认 POSTGRESQL
+    host: str           # 默认 "localhost"
+    port: int           # 默认 5432
+    username: str       # 默认 "postgres"
+    password: str       # 默认 ""
+    database: str       # 默认 "app"
+    pool_size: int      # 默认 20
+    max_overflow: int   # 默认 10
+    pool_timeout: int   # 默认 30
+    pool_recycle: int   # 默认 3600
+
+    @property
+    def url(self) -> str  # 数据库连接 URL
+```
+
+### LogConfig
+
+```python
+class LogConfig(BaseConfig):
+    level: LogLevel       # 默认 INFO
+    format: str           # 默认 "json"
+    output: str           # 默认 "console"
+    dir_name: str         # 默认 "logs"
+    file_name: str        # 默认 "app.log"
+    max_bytes: int        # 默认 10485760 (10MB)
+    backup_count: int     # 默认 5
+```
+
+---
+
+## reg_model.data — 数据管理
+
+::: {.callout-note}
+以下函数均已定义接口但尚未实现具体逻辑，目前为占位存根。
+:::
+
+```python
+def fetch_data(
+    output_path: Path | None = None,
+    source: str | None = None,
+) -> None
+    """从远程或数据库获取原始数据"""
+
+def validate_data(
+    input_path: Path,
+    schema_path: Path | None = None,
+    strict: bool = False,
+) -> bool
+    """验证数据格式与字段完整性"""
+
+def split_dataset(
+    input_path: Path,
+    output_dir: Path,
+    ratio: str = "70:20:10",
+    time_column: str | None = None,
+    stratify: str | None = None,
+    random_seed: int = 42,
+) -> None
+    """按比例或时间列拆分训练/验证/测试集"""
+
+def describe_data(
+    input_path: Path,
+    output_path: Path | None = None,
+) -> None
+    """输出数据统计概要"""
+
+def clean_data(
+    input_path: Path,
+    output_path: Path,
+    config_path: Path | None = None,
+) -> None
+    """执行默认或自定义清洗规则"""
+
+def preprocess_data(
+    input_path: Path,
+    output_dir: Path,
+    config_path: Path | None = None,
+) -> None
+    """执行数据预处理和特征工程"""
+
+def export_data(
+    input_path: Path,
+    output_path: Path,
+    format: str = "csv",
+) -> None
+    """导出处理好的数据到指定格式 (csv, parquet, json)"""
+```
+
+---
+
+## reg_model.cli — CLI 应用
+
+```python
+from reg_model.cli import app  # Typer 应用实例
+```
+
+CLI 启动流程：
+
+1. `main()` 接收 `@support_help_at_end` 装饰（支持末位 `help` 语法）
+2. 全局选项回调解析参数存入 `ctx.obj`（`GlobalOptions` 模型）
+3. 非 `config`/`version` 子命令触发 `bootstrap_app()` 加载配置并初始化日志
+
+### GlobalOptions
+
+```python
+class GlobalOptions(BaseModel):
+    config_file: str | None
+    log_file: str | None
+    msg_level: LogLevel
+    verbose: bool
+    quiet: bool
+```
+
+### bootstrap_app
+
+```python
+def bootstrap_app(
+    config_file: str | None = None,
+    msg_level: LogLevel = LogLevel.INFO,
+    log_file: str | None = None,
+) -> Settings
+    """加载配置, 注入 CLI 覆盖, 初始化日志"""
+```
