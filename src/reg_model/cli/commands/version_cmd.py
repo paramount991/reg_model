@@ -12,4 +12,4 @@ app = typer.Typer()
 
 @app.command()
 def version():  # noqa: D103
-    typer.echo(f"{const.PROJECT_DESC} V{const.PROJECT_VERSION}")
+    typer.echo(f'{const.PROJECT_DESC} V{const.PROJECT_VERSION}')
